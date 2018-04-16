@@ -14,6 +14,5 @@
   * @attention not support float(%f) yet! can use `gcvt()` convert to string firstly
   */ 
 #define Trace                                   CSDK_FUNC(Trace)
-#define MEMBLOCK_Trace                          CSDK_FUNC(MEMBLOCK_Trace)
 
 #endif

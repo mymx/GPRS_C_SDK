@@ -114,7 +114,6 @@ ifneq "${AM_MODEL}" ""
 endif
 
 export LODCOMBINE_TOOL := ${SOFT_WORKDIR}/platform/compilation/lodCombine.pl
-export LODPYCOMBINE_TOOL := ${SOFT_WORKDIR}/platform/compilation/lodCombine.py
 
 ########################################################################
 # End of MAKELEVEL=0. Things to do only once.
@@ -609,13 +608,12 @@ else
 ifneq "${AM_PLT_LOD_FILE}" ""
 	@${ECHO}
 	@${ECHO} "LODTOBIN  $(LOD_FILE)"
-	# $(LOD_TO_BIN) ${LOD_FILE} -0
-	# 		$(LODCOMBINE_TOOL) openat -l $(AM_PLT_LOD_FILE) -i $(LOD_FILE) -o $(WITH_PLT_LOD_FILE); 
+	$(LOD_TO_BIN) ${LOD_FILE} -0
 	${ECHO}  "LODTOBIN          Sucessful"
-	@${ECHO} "LODPYCOMBINE        Combine user lod with Platform lod"
+	@${ECHO} "LODCOMBINE        Combine user lod with Platform lod"
 	if [ -f $(LOD_FILE) ]; then                                                                 \
 		if [ -f $(AM_PLT_LOD_FILE) ]; then                                                       \
-			python $(LODPYCOMBINE_TOOL) --opt merge --bl $(AM_PLT_LOD_FILE) --lod $(LOD_FILE) --output $(WITH_PLT_LOD_FILE); \
+			$(LODCOMBINE_TOOL) openat -l $(AM_PLT_LOD_FILE) -i $(LOD_FILE) -o $(WITH_PLT_LOD_FILE); \
 			if [ $$? -gt 0 ]; then \
 				${ECHO} "LODCOMBINE        Combine failed";   \
 				exit 1; \

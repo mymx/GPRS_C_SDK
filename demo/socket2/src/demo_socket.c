@@ -7,13 +7,13 @@
 #include <api_socket.h>
 #include <api_network.h>
 #include <api_debug.h>
-
+#include <api_hal_uart.h>
 
 /*******************************************************************/
 /////////////////////////socket configuration////////////////////////
 
-#define DNS_DOMAIN  "45.76.162.240"
-#define SERVER_PORT 9999
+#define DNS_DOMAIN  "nan5508.nat123.net"
+#define SERVER_PORT 49616
 #define RECEIVE_BUFFER_MAX_LENGTH 200
 /*******************************************************************/
 
@@ -27,6 +27,14 @@
 #define TEST_TASK_NAME          "Socket Test Task"
 
 static HANDLE socketTaskHandle = NULL;
+
+uint8_t rxbuffer[100];
+void OnUart1ReceivedData(UART_Callback_Param_t param)
+{
+    memset(rxbuffer,0,sizeof(rxbuffer));
+    uint32_t len = UART_Read(UART1,rxbuffer,param.length,200);
+    Trace(1,"uart1 received data,length:%d,read:%d,data:%s",param.length,len,rxbuffer);
+}
 
 int socketFd = -1;
 uint8_t buffer[RECEIVE_BUFFER_MAX_LENGTH];
@@ -176,6 +184,18 @@ bool Close()
 
 void socketTestTask(void* param)
 {
+    UART_Config_t config = {
+        .baudRate = UART_BAUD_RATE_115200,
+        .dataBits = UART_DATA_BITS_8,
+        .stopBits = UART_STOP_BITS_1,
+        .parity   = UART_PARITY_NONE,
+        .rxCallback = OnUart1ReceivedData,
+    };
+    uint32_t times = 0;
+    UART_Init(UART1,config);
+    config.rxCallback = NULL;
+    UART_Init(UART2,config);
+
     int failCount = 0;
     int count = 0;
     WaitSem(&sem);
@@ -184,6 +204,17 @@ void socketTestTask(void* param)
     Connect();
     while(1)
     {
+        uint8_t temp[20];
+        uint8_t buffer_uart[50];
+
+        sprintf(temp,"hello:%d,1234567890 1234567890\n", ++times);
+        UART_Write(UART1,temp,strlen(temp)+1);
+        Trace(1,"UART_Write:%s %p",temp, &times);
+        memset(buffer_uart,0,sizeof(buffer_uart));
+        uint32_t readLen = UART_Read(UART2,buffer_uart,10,3000);
+        Trace(1,"UART_Read uart2,readLen:%d,data:%s",readLen,buffer_uart);
+        OS_Sleep(200);
+
         if(failCount == 5)
         {
             Close();
@@ -204,6 +235,11 @@ void socketTestTask(void* param)
             }
         }
         Trace(2,"count:%d",count++);
+        if(readLen)
+            {
+                Write(buffer_uart,strlen(buffer_uart));
+                Trace(2,"write success");
+            }
         OS_Sleep(5000);
     }
 }

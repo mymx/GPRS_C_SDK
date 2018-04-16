@@ -25,12 +25,10 @@
 
 
 
-
 typedef struct T_INTERFACE_VTBL_TAG
 {
     //debug
     bool                (*Trace)(uint16_t nIndex,const char* fmt, ...) __attribute__((format(printf, 2, 3)));
-    void                (*MEMBLOCK_Trace)(UINT16 nIndex, UINT8 *buffer, UINT16 len, UINT8 radix);
     void                (*__assert)(const char* fmt);
 
     //power
@@ -230,12 +228,6 @@ typedef struct T_INTERFACE_VTBL_TAG
     void                (*SPI_FlushFIFOs)(SPI_ID_t spiN);
     void                (*SPI_SetIrqHandler)(SPI_ID_t spiN, SPI_Irq_Handler_t handler);
     void                (*SPI_SetIrqMask)(SPI_ID_t spiN, SPI_Irq_Flags_t irqMask);
-
-    //fota
-    bool                (*API_FotaInit)(int size);
-    int                 (*API_FotaReceiveData)(unsigned char *data, int len);
-    void                (*API_FotaClean)(void);
-    int                 (*API_FotaByServer)(char *url, void (*data_process)(const unsigned char *pData, int len) );
 
 } T_INTERFACE_VTBL_TAG;
 extern T_INTERFACE_VTBL_TAG *g_InterfaceVtbl;

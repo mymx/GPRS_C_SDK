@@ -13,10 +13,10 @@
 /////////////////////////socket configuration////////////////////////
 // edit ip address and port
 // (you can get ip and port from online tcp debug tool: http://tt.ai-thinker.com:8000/ttcloud)
-#define SERVER_IP   "122.114.122.174"
-#define SERVER_PORT 34404
+#define SERVER_IP   "nan5508.nat123.net"
+#define SERVER_PORT 57588
 
-#define DNS_DOMAIN  "www.neucrack.com"
+#define DNS_DOMAIN  "5089198d.nat123.cc"
 #define RECEIVE_BUFFER_MAX_LENGTH 200
 /*******************************************************************/
 
@@ -37,7 +37,7 @@ void EventDispatch(API_Event_t* pEvent)
     switch(pEvent->id)
     {
         case API_EVENT_ID_NO_SIMCARD:
-            Trace(10,"!!NO SIM CARD%!!!!",pEvent->param1);
+            Trace(10,"!!NO SIM CARD%d!!!!",pEvent->param1);
             break;
 
         case API_EVENT_ID_NETWORK_REGISTERED_HOME:
@@ -70,14 +70,17 @@ void EventDispatch(API_Event_t* pEvent)
                 Trace(2,"DNS get ip address error(return)!!!");
             }
             //Start connect tcp server
+
             socketFd = Socket_TcpipConnect(TCP,SERVER_IP,SERVER_PORT);
+
             Trace(2,"connect tcp server,socketFd:%d",socketFd);
+            Socket_TcpipWrite(socketFd,"hello...test string\n",strlen("hello...test string\n"));
             break;
 
         case API_EVENT_ID_SOCKET_CONNECTED:
             if(pEvent->param1 == socketFd)
             {
-                socketFd2 = Socket_TcpipConnect(TCP,SERVER_IP,SERVER_PORT);
+                socketFd2 = Socket_TcpipConnect(TCP,buffer,SERVER_PORT);
                 Trace(2,"connected tcp server,socketFd:%d",socketFd2);
             }
             Socket_TcpipWrite(pEvent->param1,"hello...test string\n",strlen("hello...test string\n"));
@@ -100,7 +103,7 @@ void EventDispatch(API_Event_t* pEvent)
             Socket_TcpipWrite(fd,buffer,length);
             Trace(2,"send received data to server");
             
-            if(++receivedDataCount > 20)
+            if(++receivedDataCount > 2000)
             {
                 Trace(2,"socket received %d times, now try to close socket",receivedDataCount);
                 Socket_TcpipClose(socketFd);

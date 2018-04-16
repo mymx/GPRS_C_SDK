@@ -1,0 +1,9 @@
+Exception: STATUS_ACCESS_VIOLATION at eip=610DDE94
+eax=0060C8C8 ebx=00004000 ecx=00000232 edx=00000000 esi=00610000 edi=0060BD88
+ebp=006005C8 esp=006005BC program=H:\GPRS_project\CSDTK\cygwin\bin\tee.exe, pid 5224, thread main
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+006005C8  610DDE94  (00608650, 0060C8C8, 00004000, 00000000)
+0060C8C8  6101FC74  (00000501, 05000000, 00000015, 0060CA20)
+      1 [main] tee 5224 _cygtls::handle_exceptions: Error while dumping state (probably corrupted stack)
